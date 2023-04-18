@@ -1,0 +1,197 @@
+Guest-book (gb)
+
+
+1. Front-End
+
+## Deployment files--------------------------------------------------------------[1.1]
+
+$ vi frontend-deployment.yaml
+ 
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: frontend
+  labels:
+    name: guestbook
+    component: frontend
+spec:
+  selector:
+    matchLabels:
+      gb-pod: guestbook
+  replicas: 3
+  template:
+    metadata: 
+      labels:
+        gb-pod: guestbook
+    spec:
+      containers:
+      - name: guestbook
+        image: paulczar/gb-frontend:v5
+        # image: gcr.io/google-sample/gb-frontend:v4
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env: 
+        - name: GET_HOSTS_FROM
+          value: dns
+        ports:
+        - containerPort: 80
+
+
+## Service files-----------[1.2]
+
+$ vi frontend-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    name: guestbook
+spec:
+  # if your cluster supports it, uncomment the following to automatically create
+  # an external load-balanced IP for the frontend service.
+  type: LoadBalancer
+  ports:
+  - ports: 80
+  selector:
+    gb-pod: guestbook
+
+
+2. Back-End
+
+## Deployment files-----------------------------------------------------------[2.1]
+
+$ vi mongo-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  labels:
+    name: mongo
+    component: backend
+spec:
+  selector:
+    matchLabels:
+      name:mongo
+  replicas: 1
+  template:
+    metadata:
+       labels:
+          name: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:4.2
+        args:
+          - --bind_ip
+          - 0.0.0.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 27017
+
+## Service files-----------[2.2]
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  labels:
+    name: mongo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 27017
+    targetPort: 27017
+  selector:
+     name: mongo
+
+----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
